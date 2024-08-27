@@ -18,6 +18,7 @@ const (
 type (
 	MongoDatabase interface{
 		SaveUserData(ctx context.Context, userData model.UserAccountRequest) error
+		Close(ctx context.Context) error
 	}
 
 	mongoDatabase struct {
@@ -26,9 +27,9 @@ type (
 	}
 )
 
-func (mdb mongoDatabase) NewClient(host, username, password string) (MongoDatabase, error) {
+func NewClient(host, username, password string) (MongoDatabase, error) {
 
-	connectionString := fmt.Sprintf("mongodb://%s:%s@%s", username, password, host)
+	connectionString := fmt.Sprintf("mongodb://%s:%s@%s/%s", username, password, host, database)
 
 	clientOptions := options.Client().ApplyURI(connectionString).SetTimeout(5*time.Second)
 	mongoClient, err := mongo.Connect(context.TODO(), clientOptions)
